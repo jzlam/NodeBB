@@ -403,21 +403,22 @@ define('admin/manage/users', [
 			});
 		});
 
+		async function changePasswordAction(modal, uids) {
+			const newPassword = modal.find('#newPassword').val();
+			const confirmPassword = modal.find('#confirmPassword').val();
+			if (newPassword !== confirmPassword) {
+				throw new Error('[[[user:change-password-error-match]]');
+			}
+			await Promise.all(uids.map(uid => api.put('/users/' + uid + '/password', {
+				currentPassword: '',
+				newPassword: newPassword,
+				})));
+		}
+		
 		$('.change-password').on('click', async function () {
 			const uids = getSelectedUids();
 			if (!uids.length) {
 				return;
-			}
-			async function changePassword(modal) {
-				const newPassword = modal.find('#newPassword').val();
-				const confirmPassword = modal.find('#confirmPassword').val();
-				if (newPassword !== confirmPassword) {
-					throw new Error('[[[user:change-password-error-match]]');
-				}
-				await Promise.all(uids.map(uid => api.put('/users/' + uid + '/password', {
-					currentPassword: '',
-					newPassword: newPassword,
-				})));
 			}
 
 			const modal = bootbox.dialog({
@@ -438,10 +439,9 @@ define('admin/manage/users', [
 						label: '[[admin/manage/users:alerts.button-change]]',
 						className: 'btn-primary',
 						callback: function () {
-							changePassword(modal).then(() => {
-								modal.modal('hide');
-							}).catch(alerts.error);
-							return false;
+							return changePassword(modal, uids)
+							.then(() => modal.modal('hide'))
+							.catch(alerts.error);
 						},
 					},
 				},
