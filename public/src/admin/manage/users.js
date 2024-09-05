@@ -413,10 +413,11 @@ define('admin/manage/users', [
 				currentPassword: '',
 				newPassword: newPassword,
 			})));
-			console.log('Jzlam');
+			console.log('Joyce Lam');
 		}
 
 		$('.change-password').on('click', async function () {
+			console.log('Joyce Lam');
 			const uids = getSelectedUids();
 			if (!uids.length) {
 				return;
