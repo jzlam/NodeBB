@@ -403,7 +403,7 @@ define('admin/manage/users', [
 			});
 		});
 
-		async function changePasswordAction(modal, uids) {
+		async function changePassword(modal, uids) {
 			const newPassword = modal.find('#newPassword').val();
 			const confirmPassword = modal.find('#confirmPassword').val();
 			if (newPassword !== confirmPassword) {
@@ -412,7 +412,8 @@ define('admin/manage/users', [
 			await Promise.all(uids.map(uid => api.put('/users/' + uid + '/password', {
 				currentPassword: '',
 				newPassword: newPassword,
-				})));
+			})));
+			console.log('Jzlam');
 		}
 
 		$('.change-password').on('click', async function () {
@@ -440,8 +441,8 @@ define('admin/manage/users', [
 						className: 'btn-primary',
 						callback: function () {
 							return changePassword(modal, uids)
-							.then(() => modal.modal('hide'))
-							.catch(alerts.error);
+								.then(() => modal.modal('hide'))
+								.catch(alerts.error);
 						},
 					},
 				},
