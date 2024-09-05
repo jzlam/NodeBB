@@ -414,7 +414,7 @@ define('admin/manage/users', [
 				newPassword: newPassword,
 				})));
 		}
-		
+
 		$('.change-password').on('click', async function () {
 			const uids = getSelectedUids();
 			if (!uids.length) {
