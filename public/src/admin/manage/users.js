@@ -403,33 +403,32 @@ define('admin/manage/users', [
 			});
 		});
 
-		async function changePassword(modal, uids) {
-			const newPassword = modal.find('#newPassword').val();
-			const confirmPassword = modal.find('#confirmPassword').val();
-			if (newPassword !== confirmPassword) {
-				throw new Error('[[[user:change-password-error-match]]');
-			}
-			await Promise.all(uids.map(uid => api.put('/users/' + uid + '/password', {
-				currentPassword: '',
-				newPassword: newPassword,
-			})));
-			console.log('Joyce Lam');
-		}
-
 		$('.change-password').on('click', async function () {
-			console.log('Joyce Lam');
 			const uids = getSelectedUids();
 			if (!uids.length) {
 				return;
 			}
 
-			const modal = bootbox.dialog({
+			const modal = createModal();
+
+			modal.find('.btn-primary').on('click', function () {
+				changePassword(modal, uids)
+					.then(() => {
+						modal.modal('hide');
+					})
+					.catch(alerts.error);
+				return false;
+			});
+		});
+
+		function createModal() {
+			return bootbox.dialog({
 				message: `<div class="d-flex flex-column gap-2">
-					<label class="form-label">[[user:new-password]]</label>
-					<input id="newPassword" class="form-control" type="text">
-					<label class="form-label">[[user:confirm-password]]</label>
-					<input id="confirmPassword" class="form-control" type="text">
-				</div>`,
+							<label class="form-label">[[user:new-password]]</label>
+							<input id="newPassword" class="form-control" type="text">
+							<label class="form-label">[[user:confirm-password]]</label>
+							<input id="confirmPassword" class="form-control" type="text">
+						  </div>`,
 				title: '[[admin/manage/users:change-password]]',
 				onEscape: true,
 				buttons: {
@@ -440,15 +439,28 @@ define('admin/manage/users', [
 					change: {
 						label: '[[admin/manage/users:alerts.button-change]]',
 						className: 'btn-primary',
-						callback: function () {
-							return changePassword(modal, uids)
-								.then(() => modal.modal('hide'))
-								.catch(alerts.error);
-						},
 					},
 				},
 			});
-		});
+		}
+
+		async function changePassword(modal, uids) {
+			console.log('Joyce Lam');  // Added console.log here
+
+			const newPassword = modal.find('#newPassword').val();
+			const confirmPassword = modal.find('#confirmPassword').val();
+
+			if (newPassword !== confirmPassword) {
+				throw new Error('[[[user:change-password-error-match]]');
+			}
+		
+			await Promise.all(uids.map(uid =>
+				api.put('/users/' + uid + '/password', {
+					currentPassword: '',
+					newPassword: newPassword,
+				})
+			));
+		}
 
 		$('.password-reset-email').on('click', function () {
 			const uids = getSelectedUids();
