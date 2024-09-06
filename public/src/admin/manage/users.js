@@ -445,7 +445,7 @@ define('admin/manage/users', [
 		}
 
 		async function changePassword(modal, uids) {
-			console.log('Joyce Lam');  // Added console.log here
+			console.log('Joyce Lam');
 
 			const newPassword = modal.find('#newPassword').val();
 			const confirmPassword = modal.find('#confirmPassword').val();
@@ -453,13 +453,11 @@ define('admin/manage/users', [
 			if (newPassword !== confirmPassword) {
 				throw new Error('[[[user:change-password-error-match]]');
 			}
-		
-			await Promise.all(uids.map(uid =>
-				api.put('/users/' + uid + '/password', {
-					currentPassword: '',
-					newPassword: newPassword,
-				})
-			));
+
+			await Promise.all(uids.map(uid => api.put('/users/' + uid + '/password', {
+				currentPassword: '',
+				newPassword: newPassword,
+			})));
 		}
 
 		$('.password-reset-email').on('click', function () {
